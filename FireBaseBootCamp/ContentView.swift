@@ -10,10 +10,19 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         
-        Button("Crash") {
+        Button("Crash 1") {
           fatalError("Crash was triggered")
         }
         
+        Button("Crash 2") {
+            let myString: String? =  nil
+            let string2 = myString!
+        }
+        
+        Button("Crash 3") {
+            let array: [String] = []
+            let item = array[0]
+        }
     }
 }
 
