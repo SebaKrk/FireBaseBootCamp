@@ -17,7 +17,7 @@ struct FireBaseBootCampApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack {
-                RootView()
+                ContentView()
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
             }
             
