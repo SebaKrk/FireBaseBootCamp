@@ -13,28 +13,32 @@ final class SignInEmailViewModel: ObservableObject {
     @Published var email = ""
     @Published var password = ""
     
-    func signIn() {
+    func signUp() async throws {
         guard !email.isEmpty, !password.isEmpty else {
             print("no email and passowrd found")
             return
         }
-        
-        Task {
-            do {
-                let returnuserData = try await AuthenticationManager.sherd.creatuser(email: email, password: password)
-                print("succes")
-                print(returnuserData)
-            } catch {
-                print("error: \(error.localizedDescription)")
-            }
+        /// moge tak
+       // let returnuserData = try await AuthenticationManager.sherd.creatuser(email: email, password: password)
+        /// albo tak dzieki   @discardableResult
+        try await AuthenticationManager.sherd.creatuser(email: email, password: password)
+      }
+    
+    func signIn() async throws {
+        guard !email.isEmpty, !password.isEmpty else {
+            print("no email and passowrd found")
+            return
         }
-    }
+        try await AuthenticationManager.sherd.signInUser(email: email, password: password)
+      }
+    
     
 }
 
 struct SignInEmailView: View {
     
     @StateObject private var viewModel = SignInEmailViewModel()
+    @Binding var showSignInView: Bool
     
     var body: some View {
         VStack {
@@ -49,7 +53,24 @@ struct SignInEmailView: View {
                 .cornerRadius(10)
             
             Button {
-                viewModel.signIn()
+                Task {
+                    do {
+                        try await viewModel.signUp()
+                        showSignInView = false
+                        return
+                    } catch {
+                        print("error: \(error.localizedDescription)")
+                    }
+                    
+                    
+                    do {
+                        try await viewModel.signIn()
+                        showSignInView = false
+                        return
+                    } catch {
+                        print("error: \(error.localizedDescription)")
+                    }
+                }
                 
             } label: {
                 Text("Sign in")
@@ -70,6 +91,6 @@ struct SignInEmailView: View {
 
 struct SignInEmailView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInEmailView()
+        SignInEmailView(showSignInView: .constant(false))
     }
 }
